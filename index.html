@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bulk App Installer</title>
+    <title>App Installer Hub</title>
     <style>
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
             background-color: #f8f9fa;
             color: #212529;
             margin: 0;
-            padding: 20px;
+            padding: 0;
             transition: all 0.3s ease;
         }
         
@@ -21,177 +21,98 @@
 
         header {
             text-align: center;
-            margin: -20px -20px 30px;
-            padding: 40px 20px;
+            margin: 0;
+            padding: 60px 20px;
             background: linear-gradient(135deg, #0078d4, #004e9e);
             color: white;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             position: relative;
         }
         
-        .nav-buttons {
-            margin-top: 20px;
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-        }
-        
-        .nav-buttons button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 25px;
-            background: rgba(255,255,255,0.1);
-            color: white;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-            border: 2px solid transparent;
-        }
-        
-        .nav-buttons button.active {
-            background: #0078d4;
-            border-color: rgba(255,255,255,0.3);
-            box-shadow: 0 4px 15px rgba(0,120,212,0.4);
-            transform: scale(1.05);
-        }
-
-        .nav-buttons button.active::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60%;
-            height: 3px;
-            background: rgba(255,255,255,0.8);
-            border-radius: 2px;
-        }
-
-        .dark-mode .nav-buttons button.active {
-            background: #0091ff;
-            box-shadow: 0 4px 15px rgba(0,145,255,0.4);
-            border-color: rgba(255,255,255,0.2);
-        }
-
         .dark-mode header {
             background: linear-gradient(135deg, #004e9e, #002b5c);
         }
 
-        .controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 25px;
-            justify-content: center;
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
         }
 
-        .category-tabs {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            text-align: center;
         }
         
-        .category-tabs button {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 20px;
-            background: #e9ecef;
-            color: #495057;
-            cursor: pointer;
+        .dark-mode .feature-card {
+            background: #2d2d2d;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .dark-mode .feature-card:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        }
+
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #0078d4;
+        }
+        
+        .dark-mode .feature-icon {
+            color: #0091ff;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #0078d4;
+            color: white;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 20px;
             transition: all 0.2s ease;
         }
         
-        .dark-mode .category-tabs button {
-            background: #2d2d2d;
-            color: #dee2e6;
-        }
-        
-        .category-tabs button.active {
-            background: #0078d4;
-            color: white;
-        }
-        
-        .dark-mode .category-tabs button.active {
+        .dark-mode .btn {
             background: #0056b3;
         }
 
-        .search-container input {
-            padding: 8px 12px;
-            width: 280px;
-            border: 2px solid #dee2e6;
-            border-radius: 25px;
-            font-size: 14px;
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0,120,212,0.4);
         }
         
-        .dark-mode .search-container input {
-            background: #2d2d2d;
-            border-color: #495057;
-            color: #e9ecef;
+        .dark-mode .btn:hover {
+            box-shadow: 0 4px 15px rgba(0,145,255,0.4);
         }
 
-        .app-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 15px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .app-card {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: all 0.2s ease;
-        }
-        
-        .dark-mode .app-card {
-            background: #2d2d2d;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        }
-        
-        .app-card img {
-            width: 40px;
-            height: 40px;
-            object-fit: contain;
-            margin-right: 15px;
-        }
-
-        .checkbox-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            width: 100%;
-        }
-        
-        input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            margin-left: auto;
-            accent-color: #0078d4;
-            cursor: pointer;
-            flex-shrink: 0; /* Add this to prevent shrinking */
-        }
-        
-        .dark-mode input[type="checkbox"] {
-            accent-color: #0056b3;
-        }
-
-        .dark-mode-toggle, .download-btn {
+        .dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
             padding: 12px 24px;
             border: none;
             border-radius: 25px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        
-        .dark-mode-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
             background: rgba(0,0,0,0.1);
             color: #0078d4;
         }
@@ -200,421 +121,93 @@
             background: rgba(255,255,255,0.1);
             color: #e9ecef;
         }
-        
-        .download-btn {
-            display: block;
-            margin: 30px auto;
-            background: #0078d4;
-            color: white;
-        }
-        
-        .dark-mode .download-btn {
-            background: #0056b3;
-        }
 
-        .status-message {
-            padding: 15px;
-            border-radius: 12px;
-            margin: 20px auto;
-            max-width: 600px;
+        footer {
             text-align: center;
-            display: none;
-            font-weight: 500;
-        }
-
-        .status-message.error {
-            background-color: #f8d7da;
-            border: 2px solid #f5c6cb;
-            color: #721c24;
-        }
-
-        .status-message.success {
-            background-color: #d4edda;
-            border: 2px solid #c3e6cb;
-            color: #155724;
-        }
-
-        .dark-mode .status-message.error {
-            background-color: #2b0b0e;
-            border-color: #4c1414;
-            color: #ffb3b8;
-        }
-
-        .dark-mode .status-message.success {
-            background-color: #0d2912;
-            border-color: #1a4020;
-            color: #a3d7ac;
-        }
-
-        .page {
-            display: none;
+            padding: 30px;
+            margin-top: 60px;
+            background: #f1f1f1;
         }
         
-        .page.active {
-            display: block;
+        .dark-mode footer {
+            background: #252525;
         }
 
-        .credits {
-            text-align: center;
-            margin-top: 40px;
-            color: #6c757d;
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #0078d4;
         }
         
-        .dark-mode .credits {
-            color: #adb5bd;
+        .dark-mode h2 {
+            color: #0091ff;
+        }
+
+        p {
+            line-height: 1.6;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Bulk App Installer</h1>
-        <div class="nav-buttons">
-            <button class="active" onclick="showPage('winget')">Winget Apps</button>
-            <button onclick="showPage('non-winget')">Non-Winget Apps</button>
-        </div>
+        <h1>App Installer Hub</h1>
+        <p>Your one-stop solution for bulk application installations</p>
     </header>
 
     <button class="dark-mode-toggle" onclick="toggleDarkMode()">🌓 Toggle Theme</button>
 
-    <!-- Winget Apps Page -->
-    <div id="winget-page" class="page active">
-        <div class="controls">
-            <div class="category-tabs" id="wingetCategoryTabs"></div>
-            <div class="search-container">
-                <input type="text" id="wingetSearchInput" placeholder="Search apps..." onkeyup="filterWingetApps()">
+    <div class="container">
+        <section>
+            <h2>Welcome to App Installer Hub</h2>
+            <p>Simplify your application setup process with our powerful bulk installation tools. Whether you're setting up a new machine or managing multiple devices, we've got you covered.</p>
+        </section>
+
+        <div class="card-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📦</div>
+                <h2>Winget Installer</h2>
+                <p>Install multiple Windows applications quickly using Microsoft's Winget package manager. Generate custom batch scripts for automated installations.</p>
+                <a href="./bulk-installer" class="btn">Launch Winget Installer</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">⬇️</div>
+                <h2>Direct Downloads</h2>
+                <p>Download and install applications that aren't available through Winget. Our tool handles multiple downloads simultaneously.</p>
+                <a href="./bulk-installer#non-winget" class="btn">Launch Download Tool</a>
             </div>
         </div>
-        
-        <div class="app-grid" id="wingetAppGrid"></div>
-        <div class="status-message" id="wingetStatusMessage"></div>
-        <button class="download-btn" onclick="generateWingetScript()">📦 Generate Winget Script</button>
-    </div>
 
-    <!-- Non-Winget Apps Page -->
-    <div id="non-winget-page" class="page">
-        <div class="controls">
-            <div class="category-tabs" id="nonWingetCategoryTabs"></div>
-            <div class="search-container">
-                <input type="text" id="nonWingetSearchInput" placeholder="Search apps..." onkeyup="filterNonWingetApps()">
+        <section style="margin-top: 60px; text-align: center;">
+            <h2>How It Works</h2>
+            <div style="max-width: 600px; margin: 0 auto;">
+                <p><strong>1. Select</strong> the applications you need from our curated lists</p>
+                <p><strong>2. Generate</strong> scripts or download packages with one click</p>
+                <p><strong>3. Run</strong> the installation process automatically</p>
             </div>
-        </div>
-        
-        <div class="app-grid" id="nonWingetAppGrid"></div>
-        <div class="status-message" id="nonWingetStatusMessage"></div>
-        <button class="download-btn" onclick="downloadSelected()">📥 Download Selected</button>
+        </section>
     </div>
 
-    <p class="credits">Made by <strong>3xds</strong></p>
+    <footer>
+        <p>Made with ❤️ by <strong>3xds</strong></p>
+    </footer>
 
     <script>
-        // Winget Apps Data
-        const wingetApps = [
-        { "name": "Brave", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Brave_lion_icon.svg/640px-Brave_lion_icon.svg.png", "wingetId": "Brave.Brave", "category": "Browser" },
-            { "name": "OperaGX", "icon": "https://upload.wikimedia.org/wikipedia/commons/e/e7/Opera_GX_Icon.svg", "wingetId": "Opera.OperaGX", "category": "Browser" },
-            { "name": "Opera", "icon": "https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/opera-icon.png", "wingetId": "Opera.Opera", "category": "Browser" },
-            { "name": "Mozilla Firefox", "icon": "https://upload.wikimedia.org/wikipedia/commons/a/a0/Firefox_logo%2C_2019.svg", "wingetId": "Mozilla.Firefox", "category": "Browser" },
-            { "name": "Google Chrome", "icon": "https://upload.wikimedia.org/wikipedia/commons/e/e1/Google_Chrome_icon_%28February_2022%29.svg", "wingetId": "Google.Chrome", "category": "Browser" },
-
-            // Media
-            { "name": "Spotify", "icon": "https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg", "wingetId": "Spotify.Spotify", "category": "Media" },
-            { "name": "VLC Media Player", "icon": "https://images.videolan.org/images/icons-VLC/vlc.mini.svg", "wingetId": "VideoLAN.VLC", "category": "Media" },
-            { "name": "iTunes", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/ITunes_logo.svg/640px-ITunes_logo.svg.png", "wingetId": "Apple.iTunes", "category": "Media" },
-            { "name": "Audacity", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Audacity_Logo_nofilter.svg/640px-Audacity_Logo_nofilter.svg.png", "wingetId": "Audacity.Audacity", "category": "Media" },
-            { "name": "HandBrake", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/HandBrake_Icon.png/640px-HandBrake_Icon.png", "wingetId": "HandBrake.HandBrake", "category": "Media" },
-
-            // File Sharing
-            { "name": "qBittorrent", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/New_qBittorrent_Logo.svg/640px-New_qBittorrent_Logo.svg.png", "wingetId": "qBittorrent.qBittorrent", "category": "File Sharing" },
-
-            // Utility
-            { "name": "7-Zip", "icon": "https://7-zip.org/7ziplogo.png", "wingetId": "7zip.7zip", "category": "Utility" },
-            { "name": "WinRAR", "icon": "https://img.icons8.com/?size=256&id=PLvn50bVGAlA&format=png", "wingetId": "RARLab.WinRAR", "category": "Utility" },
-            { "name": "AnyDesk", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/AnyDesk-logo.svg/640px-AnyDesk-logo.svg.png", "wingetId": "AnyDesk.AnyDesk", "category": "Utility" },
-            { "name": "TeamViewer", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/TeamViewer_Icon.svg/640px-TeamViewer_Icon.svg.png", "wingetId": "TeamViewer.TeamViewer", "category": "Utility" },
-            { "name": "Revo", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Revouninstallerpro_icon.png/640px-Revouninstallerpro_icon.png", "wingetId": "RevoUninstaller.RevoUninstaller", "category": "Utility" },
-            { "name": "TcNo Account Switcher", "icon": "https://avatars.githubusercontent.com/u/10319195?v=4", "wingetId": "TechNobo.TcNoAccountSwitcher", "category": "Utility" },
-            { "name": "GitHub Desktop", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Github-desktop-logo-symbol.svg/640px-Github-desktop-logo-symbol.svg.png", "wingetId": "GitHub.GitHubDesktop", "category": "Utility" },
-            { "name": "Elgato Stream Deck", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Elgato_logo.svg/640px-Elgato_logo.svg.png", "wingetId": "Elgato.StreamDeck", "category": "Utility" },
-            { "name": "UWPHook", "icon": "", "wingetId": "brianlima.uwphook", "category": "Utility" },
-            { "name": "Logitech G HUB", "icon": "", "wingetId": "Logitech.GHUB", "category": "Utility" },
-
-            // Online Storage
-            { "name": "Dropbox", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Dropbox_Icon.svg/640px-Dropbox_Icon.svg.png", "wingetId": "Dropbox.Dropbox", "category": "Online Storage" },
-            { "name": "Google Drive", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Google_Drive_icon_%282020%29.svg/640px-Google_Drive_icon_%282020%29.svg.png", "wingetId": "Google.GoogleDrive", "category": "Online Storage" },
-            { "name": "OneDrive", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Microsoft_Office_OneDrive_%282019%E2%80%93present%29.svg/640px-Microsoft_Office_OneDrive_%282019%E2%80%93present%29.svg.png", "wingetId": "Microsoft.OneDrive", "category": "Online Storage" },
-
-            // Gaming
-            { "name": "Steam", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/640px-Steam_icon_logo.svg.png", "wingetId": "Valve.Steam", "category": "Gaming" },
-            { "name": "Minecraft Launcher", "icon": "https://art.pixilart.com/1c020ec9c3ce31a.png", "wingetId": "Microsoft.MinecraftLauncher", "category": "Gaming" },
-            { "name": "EA App", "icon": "https://upload.wikimedia.org/wikipedia/commons/0/0d/Electronic-Arts-Logo.svg", "wingetId": "ElectronicArts.EADesktop", "category": "Gaming" },
-            { "name": "Ubisoft Connect", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Ubisoft_logo.svg/640px-Ubisoft_logo.svg.png", "wingetId": "Ubisoft.Connect", "category": "Gaming" },
-            { "name": "CurseForge", "icon": "https://raw.githubusercontent.com/gist/thecodewarrior/110057b210551c4ecf2c9be6d58ff824/raw/38748511ca1eb5677f009092fb3fcd71cc76cdf0/unoptimized_logo.svg", "wingetId": "Overwolf.CurseForge", "category": "Gaming" },
-            { "name": "Modrinth App", "icon": "", "wingetId": "Modrinth.ModrinthApp", "category": "Gaming" },
-
-            // Messaging
-            { "name": "Discord", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Discord_Color_Text_Logo_%282015-2021%29.svg/640px-Discord_Color_Text_Logo_%282015-2021%29.svg.png", "wingetId": "Discord.Discord", "category": "Messaging" },
-            { "name": "Zoom", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Zoom_Logo_2022.jpg/640px-Zoom_Logo_2022.jpg", "wingetId": "Zoom.Zoom", "category": "Messaging" },
-            { "name": "Skype", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Skype-icon-new.png/640px-Skype-icon-new.png", "wingetId": "Microsoft.Skype", "category": "Messaging" },
-
-            // Developer Tools
-            { "name": "Visual Studio Code", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Visual_Studio_Code_1.35_icon.svg/640px-Visual_Studio_Code_1.35_icon.svg.png", "wingetId": "Microsoft.VisualStudioCode", "category": "Developer Tools" },
-            { "name": "PuTTY", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/PuTTY_Icon_upstream.svg/640px-PuTTY_Icon_upstream.svg.png", "wingetId": "PuTTY.PuTTY", "category": "Developer Tools" },
-            { "name": "Eclipse", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Eclipse-Luna-Logo.svg/640px-Eclipse-Luna-Logo.svg.png", "wingetId": "EclipseFoundation.Eclipse", "category": "Developer Tools" },
-            { "name": "WinSCP", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/WinSCP_6_Logo.png/640px-WinSCP_6_Logo.png", "wingetId": "WinSCP.WinSCP", "category": "Developer Tools" },
-            { "name": "Notepad++", "icon": "https://upload.wikimedia.org/wikipedia/commons/6/69/Notepad%2B%2B_Logo.svg", "wingetId": "Notepad++.Notepad++", "category": "Developer Tools" },
-            { "name": "FileZilla", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/FileZilla_logo.svg/640px-FileZilla_logo.svg.png", "wingetId": "FileZilla.FileZilla", "category": "Developer Tools" },
-            { "name": "Python", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/640px-Python-logo-notext.svg.png", "wingetId": "Python.Python.3", "category": "Developer Tools" },
-
-            //.NET
-            { "name": ".NET 4.8.1", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Microsoft_.NET_logo.svg/1200px-Microsoft_.NET_logo.svg.png", "wingetId": "Microsoft.DotNet.Framework.DeveloperPack_4.8.1", "category": ".NET" },
-            { "name": ".NET Desktop Runtime (x64) 8.0.13.34517", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Microsoft_.NET_logo.svg/1200px-Microsoft_.NET_logo.svg.png", "wingetId": "Microsoft.DotNet.DesktopRuntime.8_x64", "category": ".NET" },
-            { "name": ".NET Desktop Runtime (arm64) 8.0.13.34517", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Microsoft_.NET_logo.svg/1200px-Microsoft_.NET_logo.svg.png", "wingetId": "Microsoft.DotNet.DesktopRuntime.8_arm64", "category": ".NET" },
-            { "name": ".NET Desktop Runtime (x86) 8.0.13.34517", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Microsoft_.NET_logo.svg/1200px-Microsoft_.NET_logo.svg.png", "wingetId": "Microsoft.DotNet.DesktopRuntime.8_x86", "category": ".NET" },
-            { "name": ".NET Desktop Runtime (x64) 9.0.2.34517", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Microsoft_.NET_logo.svg/1200px-Microsoft_.NET_logo.svg.png", "wingetId": "Microsoft.DotNet.DesktopRuntime.9_x64", "category": ".NET" },
-            { "name": ".NET Desktop Runtime (arm64) 9.0.2.34517", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Microsoft_.NET_logo.svg/1200px-Microsoft_.NET_logo.svg.png", "wingetId": "Microsoft.DotNet.DesktopRuntime.9_arm64", "category": ".NET" },
-            { "name": ".NET Desktop Runtime (x86) 9.0.2.34517", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Microsoft_.NET_logo.svg/1200px-Microsoft_.NET_logo.svg.png", "wingetId": "Microsoft.DotNet.DesktopRuntime.9_x86", "category": ".NET" },
-
-            // Imaging
-            { "name": "Blender","icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Blender_logo_no_text.svg/640px-Blender_logo_no_text.svg.png", "wingetId": "BlenderFoundation.Blender", "category": "Imaging" },
-            { "name": "Paint.NET", "icon": "https://getpaint.net/images/Logo4.png", "wingetId": "paint-net.paint-net", "category": "Imaging" },
-            { "name": "ShareX", "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/ShareX_Logo.png/640px-ShareX_Logo.png", "wingetId": "ShareX.ShareX", "category": "Imaging" }
-        ];
-        let selectedWingetApps = [];
-        let currentWingetCategory = 'all';
-
-        // Non-Winget Apps Data
-        const nonWingetApps = [
-            { "name": "Vencord", "icon": "https://vencord.dev/assets/logo-nav-oneko-padding.png", "downloadUrl": "https://github.com/Vencord/Installer/releases/latest/download/VencordInstaller.exe", "category": "Utility" }
-        ];
-        let selectedNonWingetApps = [];
-        let currentNonWingetCategory = 'all';
-
-        // Common Functions
         function toggleDarkMode() {
             document.body.classList.toggle('dark-mode');
             localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
         }
 
-        function showPage(pageId) {
-            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-            document.querySelectorAll('.nav-buttons button').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(`${pageId}-page`).classList.add('active');
-            document.querySelector(`.nav-buttons button[onclick="showPage('${pageId}')"]`).classList.add('active');
-            
-            if(pageId === 'winget') initWingetPage();
-            if(pageId === 'non-winget') initNonWingetPage();
-        }
-
-        // Winget Page Functions
-        function initWingetPage() {
-            renderWingetCategories();
-            filterWingetApps();
-            updateWingetButton();
-        }
-
-        function renderWingetCategories() {
-            const categories = ['all', ...new Set(wingetApps.map(app => app.category))];
-            const container = document.getElementById('wingetCategoryTabs');
-            container.innerHTML = '';
-            
-            categories.forEach(category => {
-                const button = document.createElement('button');
-                button.textContent = category.charAt(0).toUpperCase() + category.slice(1);
-                button.onclick = () => setWingetCategory(category);
-                button.classList.toggle('active', category === currentWingetCategory);
-                container.appendChild(button);
-            });
-        }
-
-        function setWingetCategory(category) {
-            currentWingetCategory = category;
-            document.querySelectorAll('#wingetCategoryTabs button').forEach(btn => {
-                btn.classList.toggle('active', btn.textContent.toLowerCase() === category.toLowerCase());
-            });
-            filterWingetApps();
-        }
-
-        function filterWingetApps() {
-            const searchTerm = document.getElementById('wingetSearchInput').value.toLowerCase();
-            const grid = document.getElementById('wingetAppGrid');
-            grid.innerHTML = '';
-            
-            wingetApps.filter(app => {
-                const matchesCategory = currentWingetCategory === 'all' || app.category === currentWingetCategory;
-                const matchesSearch = app.name.toLowerCase().includes(searchTerm);
-                return matchesCategory && matchesSearch;
-            }).forEach(app => {
-                grid.appendChild(createWingetAppCard(app));
-            });
-        }
-
-        function createWingetAppCard(app) {
-            const isChecked = selectedWingetApps.some(selected => selected.name === app.name);
-            const card = document.createElement('div');
-            card.className = 'app-card';
-            card.innerHTML = `
-                <img src="${app.icon}" alt="${app.name}">
-                <div class="checkbox-container">
-                    <label>${app.name}</label>
-                    <input type="checkbox" 
-                           onchange="toggleWingetSelection('${app.name}')" 
-                           ${isChecked ? 'checked' : ''}>
-                </div>
-            `;
-            return card;
-        }
-
-        function toggleWingetSelection(appName) {
-            const app = wingetApps.find(a => a.name === appName);
-            const index = selectedWingetApps.findIndex(a => a.name === appName);
-            
-            if(index === -1) {
-                selectedWingetApps.push(app);
-            } else {
-                selectedWingetApps.splice(index, 1);
-            }
-            updateWingetButton();
-        }
-
-        function updateWingetButton() {
-            const btn = document.querySelector('#winget-page .download-btn');
-            btn.textContent = `📦 Generate Script (${selectedWingetApps.length})`;
-        }
-
-        function generateWingetScript() {
-            if(selectedWingetApps.length === 0) {
-                showWingetStatus('Please select at least one app', 'error');
-                return;
-            }
-
-            const batchContent = [
-                '@echo off',
-                'echo Installing selected applications via Winget',
-                ...selectedWingetApps.map(app => `winget install --id ${app.wingetId} --silent --accept-package-agreements`),
-                'echo Installation complete!',
-                'pause'
-            ].join('\n');
-
-            downloadFile('winget-install.bat', batchContent);
-            showWingetStatus('Script generated successfully!', 'success');
-        }
-
-        // Non-Winget Page Functions
-        function initNonWingetPage() {
-            renderNonWingetCategories();
-            filterNonWingetApps();
-            updateNonWingetButton();
-        }
-
-        function renderNonWingetCategories() {
-            const categories = ['all', ...new Set(nonWingetApps.map(app => app.category))];
-            const container = document.getElementById('nonWingetCategoryTabs');
-            container.innerHTML = '';
-            
-            categories.forEach(category => {
-                const button = document.createElement('button');
-                button.textContent = category.charAt(0).toUpperCase() + category.slice(1);
-                button.onclick = () => setNonWingetCategory(category);
-                button.classList.toggle('active', category === currentNonWingetCategory);
-                container.appendChild(button);
-            });
-        }
-
-        function setNonWingetCategory(category) {
-            currentNonWingetCategory = category;
-            document.querySelectorAll('#nonWingetCategoryTabs button').forEach(btn => {
-                btn.classList.toggle('active', btn.textContent.toLowerCase() === category.toLowerCase());
-            });
-            filterNonWingetApps();
-        }
-
-        function filterNonWingetApps() {
-            const searchTerm = document.getElementById('nonWingetSearchInput').value.toLowerCase();
-            const grid = document.getElementById('nonWingetAppGrid');
-            grid.innerHTML = '';
-            
-            nonWingetApps.filter(app => {
-                const matchesCategory = currentNonWingetCategory === 'all' || app.category === currentNonWingetCategory;
-                const matchesSearch = app.name.toLowerCase().includes(searchTerm);
-                return matchesCategory && matchesSearch;
-            }).forEach(app => {
-                grid.appendChild(createNonWingetAppCard(app));
-            });
-        }
-
-        function createNonWingetAppCard(app) {
-            const isChecked = selectedNonWingetApps.some(selected => selected.name === app.name);
-            const card = document.createElement('div');
-            card.className = 'app-card';
-            card.innerHTML = `
-                <img src="${app.icon}" alt="${app.name}">
-                <div class="checkbox-container">
-                    <label>${app.name}</label>
-                    <input type="checkbox" 
-                           onchange="toggleNonWingetSelection('${app.name}')" 
-                           ${isChecked ? 'checked' : ''}>
-                </div>
-            `;
-            return card;
-        }
-
-        function toggleNonWingetSelection(appName) {
-            const app = nonWingetApps.find(a => a.name === appName);
-            const index = selectedNonWingetApps.findIndex(a => a.name === appName);
-            
-            if(index === -1) {
-                selectedNonWingetApps.push(app);
-            } else {
-                selectedNonWingetApps.splice(index, 1);
-            }
-            updateNonWingetButton();
-        }
-
-        function updateNonWingetButton() {
-            const btn = document.querySelector('#non-winget-page .download-btn');
-            btn.textContent = `📥 Download Selected (${selectedNonWingetApps.length})`;
-        }
-
-        function downloadSelected() {
-            let testPopup = window.open("", "_blank");
-
-            if (!testPopup || testPopup.closed || typeof testPopup.closed === "undefined") {
-                alert("Pop-ups are blocked! Please allow pop-ups for this site.");
-                return;
-            }
-            testPopup.close();
-
-            selectedNonWingetApps.forEach(app => {
-                let newWindow = window.open(app.downloadUrl, "_blank");
-                if (!newWindow) alert(`Pop-up blocked for ${app.name}. Enable pop-ups.`);
-            });
-        }
-
-        // Common Helper Functions
-        function downloadFile(filename, content) {
-            const blob = new Blob([content], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-        function showWingetStatus(message, type) {
-            const status = document.getElementById('wingetStatusMessage');
-            status.textContent = message;
-            status.className = `status-message ${type}`;
-            status.style.display = 'block';
-            setTimeout(() => status.style.display = 'none', 3000);
-        }
-
-        // Initialize
+        // Initialize dark mode if previously set
         if(localStorage.getItem('darkMode') === 'true') {
             document.body.classList.add('dark-mode');
         }
-        showPage('winget');
     </script>
 </body>
 </html>
