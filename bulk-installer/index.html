@@ -235,12 +235,6 @@
             color: #155724;
         }
 
-        .status-message.info {
-            background-color: #cce5ff;
-            border: 2px solid #b8daff;
-            color: #004085;
-        }
-
         .dark-mode .status-message.error {
             background-color: #2b0b0e;
             border-color: #4c1414;
@@ -251,12 +245,6 @@
             background-color: #0d2912;
             border-color: #1a4020;
             color: #a3d7ac;
-        }
-
-        .dark-mode .status-message.info {
-            background-color: #001b33;
-            border-color: #004280;
-            color: #70b1ff;
         }
 
         .page {
@@ -304,8 +292,8 @@
     <header>
         <h1>Bulk App Installer</h1>
         <div class="nav-buttons">
-            <button class="active" onclick="showPage('winget')">Winget Apps</button>
-            <button onclick="showPage('non-winget')">Non-Winget Apps</button>
+            <button id="winget-tab" class="active" onclick="showPage('winget')">Winget Apps</button>
+            <button id="non-winget-tab" onclick="showPage('non-winget')">Non-Winget Apps</button>
         </div>
     </header>
 
@@ -419,9 +407,30 @@
             document.getElementById(`${pageId}-page`).classList.add('active');
             document.querySelector(`.nav-buttons button[onclick="showPage('${pageId}')"]`).classList.add('active');
             
+            // Update URL hash without page reload
+            history.replaceState(null, null, `#${pageId === 'winget' ? '' : pageId}`);
+            
             if(pageId === 'winget') initWingetPage();
             if(pageId === 'non-winget') initNonWingetPage();
         }
+
+        // Handle initial page load based on hash
+        function checkInitialPage() {
+            if(window.location.hash === '#non-winget') {
+                showPage('non-winget');
+            } else {
+                showPage('winget');
+            }
+        }
+
+        // Handle hash changes
+        window.addEventListener('hashchange', function() {
+            if(window.location.hash === '#non-winget') {
+                showPage('non-winget');
+            } else {
+                showPage('winget');
+            }
+        });
 
         // Winget Page Functions
         function initWingetPage() {
@@ -724,7 +733,9 @@
         if(localStorage.getItem('darkMode') === 'true') {
             document.body.classList.add('dark-mode');
         }
-        showPage('winget');
+        
+        // Initialize based on URL hash
+        checkInitialPage();
     </script>
 </body>
 </html>
