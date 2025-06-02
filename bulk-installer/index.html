@@ -81,7 +81,15 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            gap: 1.5rem;
+        }
+
+        .nav-search-container {
+            display: flex;
+            align-items: center;
             gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .logo {
@@ -331,9 +339,41 @@
             position: sticky;
             bottom: 0;
             z-index: 50;
-            padding: 1rem 2rem;
+            padding: 0;
             background: var(--bg-primary);
             border-top: 1px solid var(--border-color);
+            box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Sticky Status Messages */
+        .sticky-status-messages {
+            padding: 1rem 2rem 0 2rem;
+            background: var(--bg-primary);
+        }
+
+        .sticky-status-messages .status-message {
+            margin: 0;
+            margin-bottom: 1rem;
+            border-radius: var(--radius-md);
+            padding: 0.75rem 1rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: none;
+            animation: slideDown 0.3s ease;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            z-index: 60;
+        }
+
+        @keyframes slideDown {
+            from { 
+                opacity: 0; 
+                transform: translateY(-10px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
         }
 
         /* Action Buttons */
@@ -344,12 +384,9 @@
             flex-wrap: wrap;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 1rem;
-            background: var(--bg-secondary);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            background: transparent;
             backdrop-filter: blur(20px);
-            box-shadow: var(--shadow-lg);
         }
 
         .btn {
@@ -379,15 +416,16 @@
         }
 
         .btn-secondary {
-            background: var(--bg-card);
+            background: rgba(255, 255, 255, 0.1);
             color: var(--text-primary);
-            border: 1px solid var(--border-color);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .btn-secondary:hover {
-            background: var(--bg-card-hover);
-            border-color: var(--border-hover);
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--accent-primary);
             transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
         }
 
         /* Status Messages */
@@ -412,9 +450,94 @@
             border: 1px solid rgba(239, 68, 68, 0.2);
         }
 
+        .status-message.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
         @keyframes slideIn {
             from { opacity: 0; transform: translateX(-10px); }
             to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Import Results Modal */
+        .import-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .import-modal-content {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            margin: 1rem;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .import-modal h3 {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .import-results {
+            margin-bottom: 1.5rem;
+        }
+
+        .import-section {
+            margin-bottom: 1rem;
+        }
+
+        .import-section h4 {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .import-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .import-list li {
+            padding: 0.25rem 0;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .import-list.valid li {
+            color: var(--success);
+        }
+
+        .import-list.invalid li {
+            color: var(--error);
+        }
+
+        .import-list.suggestions li {
+            color: var(--warning);
+        }
+
+        .close-modal {
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 600;
         }
 
         /* Footer */
@@ -467,8 +590,14 @@
                 gap: 1rem;
             }
 
+            .nav-search-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
             .search-box {
                 min-width: auto;
+                width: 100%;
             }
 
             .app-grid {
@@ -477,13 +606,17 @@
             }
 
             .sticky-actions {
-                padding: 1rem;
+                padding: 0;
+            }
+
+            .sticky-status-messages {
+                padding: 0.75rem 1rem 0 1rem;
             }
 
             .actions {
                 flex-direction: column;
                 align-items: stretch;
-                padding: 0.75rem;
+                padding: 0.75rem 1rem;
             }
 
             .theme-toggle {
@@ -498,6 +631,11 @@
             .nav-tab {
                 flex: 1;
                 text-align: center;
+            }
+
+            .import-modal-content {
+                margin: 0.5rem;
+                padding: 1.5rem;
             }
         }
 
@@ -545,9 +683,6 @@
             font-weight: 500;
         }
     </style>
-    <!-- Include external data files -->
-    <script src="wingetApps.js"></script>
-    <script src="nonWingetApps.js"></script>
 </head>
 <body>
     <!-- Theme Toggle -->
@@ -559,19 +694,39 @@
     <header class="header">
         <div class="header-content">
             <h1 class="logo">Bulk App Installer</h1>
-            <nav class="nav-tabs">
-                <button class="nav-tab active" onclick="showPage('winget')">
-                    Winget Apps
-                </button>
-                <button class="nav-tab" onclick="showPage('non-winget')">
-                    Non-Winget Apps
-                </button>
-            </nav>
+            <div class="nav-search-container">
+                <nav class="nav-tabs">
+                    <button class="nav-tab active" onclick="showPage('winget')">
+                        Winget Apps
+                    </button>
+                    <button class="nav-tab" onclick="showPage('non-winget')">
+                        Non-Winget Apps
+                    </button>
+                </nav>
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input 
+                        type="text" 
+                        class="search-input" 
+                        id="headerSearchInput" 
+                        placeholder="Search applications..." 
+                    >
+                </div>
+            </div>
         </div>
     </header>
 
     <!-- Hidden File Input -->
     <input type="file" id="batUpload" accept=".bat" class="hidden">
+
+    <!-- Import Results Modal -->
+    <div id="importModal" class="import-modal">
+        <div class="import-modal-content">
+            <h3>Import Results</h3>
+            <div id="importResults" class="import-results"></div>
+            <button class="close-modal" onclick="closeImportModal()">Close</button>
+        </div>
+    </div>
 
     <!-- Main Content -->
     <main class="main">
@@ -579,16 +734,6 @@
         <div id="winget-page" class="page active">
             <div class="controls">
                 <div class="category-filters" id="wingetCategoryTabs"></div>
-                <div class="search-box">
-                    <span class="search-icon">🔍</span>
-                    <input 
-                        type="text" 
-                        class="search-input" 
-                        id="wingetSearchInput" 
-                        placeholder="Search applications..." 
-                        onkeyup="filterWingetApps()"
-                    >
-                </div>
             </div>
             
             <div class="app-grid" id="wingetAppGrid"></div>
@@ -600,16 +745,6 @@
         <div id="non-winget-page" class="page">
             <div class="controls">
                 <div class="category-filters" id="nonWingetCategoryTabs"></div>
-                <div class="search-box">
-                    <span class="search-icon">🔍</span>
-                    <input 
-                        type="text" 
-                        class="search-input" 
-                        id="nonWingetSearchInput" 
-                        placeholder="Search applications..." 
-                        onkeyup="filterNonWingetApps()"
-                    >
-                </div>
             </div>
             
             <div class="app-grid" id="nonWingetAppGrid"></div>
@@ -620,6 +755,11 @@
 
     <!-- Sticky Action Bar at Bottom -->
     <div class="sticky-actions" id="stickyActions">
+        <!-- Sticky Status Messages -->
+        <div class="sticky-status-messages">
+            <div class="status-message" id="stickyStatusMessage"></div>
+        </div>
+        
         <div class="actions">
             <button class="btn btn-secondary" onclick="document.getElementById('batUpload').click()">
                 <span>📁</span>
@@ -642,7 +782,11 @@
         </p>
     </footer>
 
+    <!-- Include external data files -->
+    <script src="wingetApps.js"></script>
+    <script src="nonWingetApps.js"></script>
     <script>
+
         // Global variables
         let selectedWingetApps = [];
         let currentWingetCategory = 'all';
@@ -665,6 +809,24 @@
             }
         }
 
+        // Utility function for sticky status messages
+        function showStickyStatus(message, type) {
+            const status = document.getElementById('stickyStatusMessage');
+            if (status) {
+                status.textContent = message;
+                status.className = `status-message ${type}`;
+                status.style.display = 'block';
+                
+                // Auto-hide after 5 seconds for success/warning, 8 seconds for errors
+                const hideDelay = type === 'error' ? 8000 : 5000;
+                setTimeout(() => {
+                    if (status.style.display === 'block') {
+                        status.style.display = 'none';
+                    }
+                }, hideDelay);
+            }
+        }
+
         // Page navigation
         function showPage(pageId) {
             // Update nav tabs
@@ -674,6 +836,12 @@
             // Update pages
             document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
             document.getElementById(`${pageId}-page`).classList.add('active');
+            
+            // Clear search when switching pages
+            const searchInput = document.getElementById('headerSearchInput');
+            if (searchInput) {
+                searchInput.value = '';
+            }
             
             // Update sticky actions
             updateStickyActions(pageId);
@@ -690,6 +858,9 @@
             const stickyActions = document.getElementById('stickyActions');
             if (pageId === 'winget') {
                 stickyActions.innerHTML = `
+                    <div class="sticky-status-messages">
+                        <div class="status-message" id="stickyStatusMessage"></div>
+                    </div>
                     <div class="actions">
                         <button class="btn btn-secondary" onclick="document.getElementById('batUpload').click()">
                             <span>📁</span>
@@ -704,6 +875,9 @@
                 updateWingetButton();
             } else {
                 stickyActions.innerHTML = `
+                    <div class="sticky-status-messages">
+                        <div class="status-message" id="stickyStatusMessage"></div>
+                    </div>
                     <div class="actions">
                         <button class="btn btn-primary" onclick="downloadSelected()">
                             <span>⬇️</span>
@@ -745,7 +919,7 @@
         }
 
         function filterWingetApps() {
-            const searchTerm = document.getElementById('wingetSearchInput').value.toLowerCase();
+            const searchTerm = document.getElementById('headerSearchInput').value.toLowerCase();
             const grid = document.getElementById('wingetAppGrid');
             
             const filteredApps = wingetApps.filter(app => {
@@ -816,13 +990,15 @@
 
         function updateWingetButton() {
             const btn = document.getElementById('winget-download-text');
-            const count = selectedWingetApps.length;
-            btn.textContent = count > 0 ? `Generate Script (${count})` : 'Generate Script';
+            if (btn) {
+                const count = selectedWingetApps.length;
+                btn.textContent = count > 0 ? `Generate Script (${count})` : 'Generate Script';
+            }
         }
 
-                function generateWingetScript() {
+        function generateWingetScript() {
             if (selectedWingetApps.length === 0) {
-                showWingetStatus('Please select at least one application', 'error');
+                showStickyStatus('Please select at least one application', 'error');
                 return;
             }
 
@@ -909,7 +1085,7 @@
             ].join('\n');
 
             downloadFile('winget-install.bat', batchContent);
-            showWingetStatus(`Generated script for ${selectedWingetApps.length} applications!`, 'success');
+            showStickyStatus(`Generated script for ${selectedWingetApps.length} applications!`, 'success');
         }
 
         function showWingetStatus(message, type) {
@@ -950,7 +1126,7 @@
         }
 
         function filterNonWingetApps() {
-            const searchTerm = document.getElementById('nonWingetSearchInput').value.toLowerCase();
+            const searchTerm = document.getElementById('headerSearchInput').value.toLowerCase();
             const grid = document.getElementById('nonWingetAppGrid');
             
             const filteredApps = nonWingetApps.filter(app => {
@@ -1021,20 +1197,22 @@
 
         function updateNonWingetButton() {
             const btn = document.getElementById('non-winget-download-text');
-            const count = selectedNonWingetApps.length;
-            btn.textContent = count > 0 ? `Download Selected (${count})` : 'Download Selected';
+            if (btn) {
+                const count = selectedNonWingetApps.length;
+                btn.textContent = count > 0 ? `Download Selected (${count})` : 'Download Selected';
+            }
         }
 
         function downloadSelected() {
             if (selectedNonWingetApps.length === 0) {
-                showNonWingetStatus('Please select at least one application to download', 'error');
+                showStickyStatus('Please select at least one application to download', 'error');
                 return;
             }
 
             // Test popup blocker
             let testPopup = window.open("", "_blank");
             if (!testPopup || testPopup.closed || typeof testPopup.closed === "undefined") {
-                showNonWingetStatus('Pop-ups are blocked! Please allow pop-ups to download files.', 'error');
+                showStickyStatus('Pop-ups are blocked! Please allow pop-ups to download files.', 'error');
                 return;
             }
             testPopup.close();
@@ -1045,12 +1223,12 @@
                 if (newWindow) {
                     successCount++;
                 } else {
-                    showNonWingetStatus(`Pop-up blocked for ${app.name}. Please enable pop-ups.`, 'error');
+                    showStickyStatus(`Pop-up blocked for ${app.name}. Please enable pop-ups.`, 'error');
                 }
             });
 
             if (successCount > 0) {
-                showNonWingetStatus(`Started ${successCount} download(s) in new tabs`, 'success');
+                showStickyStatus(`Started ${successCount} download(s) in new tabs`, 'success');
             }
         }
 
@@ -1062,7 +1240,7 @@
             setTimeout(() => status.style.display = 'none', 4000);
         }
 
-        // BAT file upload functionality
+        // **IMPROVED BAT FILE IMPORT FUNCTIONALITY**
         document.getElementById('batUpload').addEventListener('change', handleBatUpload);
 
         function handleBatUpload(event) {
@@ -1071,61 +1249,232 @@
 
             const reader = new FileReader();
             reader.onload = function(e) {
-                parseBatContent(e.target.result);
+                parseBatContentImproved(e.target.result);
                 event.target.value = '';
             };
             reader.readAsText(file);
         }
 
-        function parseBatContent(content) {
-            const lines = content.split('\n');
-            const wingetIds = [];
-            const invalidIds = [];
+        // Improved string similarity function
+        function calculateSimilarity(str1, str2) {
+            const longer = str1.length > str2.length ? str1 : str2;
+            const shorter = str1.length > str2.length ? str2 : str1;
+            const editDistance = getEditDistance(longer, shorter);
+            if (longer.length === 0) return 1.0;
+            return (longer.length - editDistance) / longer.length;
+        }
 
-            lines.forEach(line => {
-                const trimmed = line.trim().toLowerCase();
-                if (trimmed.startsWith('winget install --id')) {
-                    const parts = trimmed.split(' ');
-                    const idIndex = parts.indexOf('--id') + 1;
-                    if (idIndex > 0 && idIndex < parts.length) {
-                        const foundId = parts[idIndex];
+        function getEditDistance(str1, str2) {
+            const matrix = [];
+            for (let i = 0; i <= str2.length; i++) {
+                matrix[i] = [i];
+            }
+            for (let j = 0; j <= str1.length; j++) {
+                matrix[0][j] = j;
+            }
+            for (let i = 1; i <= str2.length; i++) {
+                for (let j = 1; j <= str1.length; j++) {
+                    if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
+                        matrix[i][j] = matrix[i - 1][j - 1];
+                    } else {
+                        matrix[i][j] = Math.min(
+                            matrix[i - 1][j - 1] + 1,
+                            matrix[i][j - 1] + 1,
+                            matrix[i - 1][j] + 1
+                        );
+                    }
+                }
+            }
+            return matrix[str2.length][str1.length];
+        }
+
+        function findSimilarApps(invalidId, threshold = 0.6) {
+            const suggestions = [];
+            wingetApps.forEach(app => {
+                const similarity1 = calculateSimilarity(invalidId.toLowerCase(), app.wingetId.toLowerCase());
+                const similarity2 = calculateSimilarity(invalidId.toLowerCase(), app.name.toLowerCase());
+                const maxSimilarity = Math.max(similarity1, similarity2);
+                
+                if (maxSimilarity >= threshold) {
+                    suggestions.push({
+                        app: app,
+                        similarity: maxSimilarity
+                    });
+                }
+            });
+            
+            return suggestions.sort((a, b) => b.similarity - a.similarity).slice(0, 3);
+        }
+
+        function parseBatContentImproved(content) {
+            const lines = content.split('\n');
+            const validIds = [];
+            const invalidIds = [];
+            const suggestions = {};
+            const allDetectedCommands = [];
+
+            // Multiple patterns to catch different winget command formats
+            const patterns = [
+                /winget\s+install\s+--id\s+([^\s]+)/i,
+                /winget\s+install\s+-i\s+([^\s]+)/i,
+                /winget\s+install\s+--source\s+\w+\s+--id\s+([^\s]+)/i,
+                /winget\s+install\s+([^\s\-][^\s]*)/i, // Commands without --id
+                /winget\s+install\s+"([^"]+)"/i, // Quoted app names
+                /winget\s+install\s+'([^']+)'/i  // Single quoted app names
+            ];
+
+            lines.forEach((line, lineNumber) => {
+                const trimmed = line.trim();
+                if (!trimmed || trimmed.startsWith('::') || trimmed.startsWith('REM')) return;
+
+                // Try each pattern
+                for (const pattern of patterns) {
+                    const match = trimmed.match(pattern);
+                    if (match) {
+                        const foundId = match[1].trim();
+                        allDetectedCommands.push({ line: lineNumber + 1, command: trimmed, id: foundId });
+                        
+                        // Check if this ID exists in our database
                         const isValid = wingetApps.some(app => 
-                            app.wingetId.toLowerCase() === foundId.toLowerCase()
+                            app.wingetId.toLowerCase() === foundId.toLowerCase() ||
+                            app.name.toLowerCase() === foundId.toLowerCase()
                         );
                         
                         if (isValid) {
-                            wingetIds.push(foundId);
+                            if (!validIds.includes(foundId)) {
+                                validIds.push(foundId);
+                            }
                         } else {
-                            invalidIds.push(foundId);
+                            if (!invalidIds.includes(foundId)) {
+                                invalidIds.push(foundId);
+                                // Find similar apps
+                                const similarApps = findSimilarApps(foundId);
+                                if (similarApps.length > 0) {
+                                    suggestions[foundId] = similarApps;
+                                }
+                            }
                         }
+                        break; // Stop checking other patterns once we find a match
                     }
                 }
             });
 
-            // Update selections
+            // Update selections for valid IDs
             selectedWingetApps = wingetApps.filter(app => 
-                wingetIds.some(id => id.toLowerCase() === app.wingetId.toLowerCase())
+                validIds.some(id => 
+                    id.toLowerCase() === app.wingetId.toLowerCase() ||
+                    id.toLowerCase() === app.name.toLowerCase()
+                )
             );
 
-            // Show results
-            if (invalidIds.length > 0) {
-                showWingetStatus(
-                    `Import completed with ${invalidIds.length} invalid IDs: ${invalidIds.slice(0, 3).join(', ')}${invalidIds.length > 3 ? '...' : ''}`,
-                    'error'
-                );
-            }
+            // Show detailed results in modal
+            showImportResults({
+                validIds,
+                invalidIds,
+                suggestions,
+                totalCommands: allDetectedCommands.length,
+                totalLines: lines.length
+            });
+
+            updateSelectionsUI();
+        }
+
+        function showImportResults(results) {
+            const modal = document.getElementById('importModal');
+            const resultsDiv = document.getElementById('importResults');
             
-            if (wingetIds.length > 0) {
-                const message = invalidIds.length > 0 
-                    ? `Partial import: ${wingetIds.length} apps selected` 
-                    : `Successfully imported ${wingetIds.length} apps!`;
+            let html = `
+                <div class="import-section">
+                    <h4>📊 Import Summary</h4>
+                    <p>Total winget commands found: ${results.totalCommands}</p>
+                    <p>Valid apps: ${results.validIds.length}</p>
+                    <p>Invalid/Unknown apps: ${results.invalidIds.length}</p>
+                </div>
+            `;
+
+            if (results.validIds.length > 0) {
+                html += `
+                    <div class="import-section">
+                        <h4>✅ Successfully Imported (${results.validIds.length})</h4>
+                        <ul class="import-list valid">
+                            ${results.validIds.map(id => `<li>${id}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            if (results.invalidIds.length > 0) {
+                html += `
+                    <div class="import-section">
+                        <h4>❌ Not Found in Database (${results.invalidIds.length})</h4>
+                        <ul class="import-list invalid">
+                            ${results.invalidIds.map(id => `<li>${id}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+
+                // Show suggestions
+                const suggestionsExist = Object.keys(results.suggestions).length > 0;
+                if (suggestionsExist) {
+                    html += `
+                        <div class="import-section">
+                            <h4>💡 Suggestions (Did you mean...?)</h4>
+                            <ul class="import-list suggestions">
+                    `;
                     
-                showWingetStatus(message, 'success');
-                updateSelectionsUI();
-            } else if (invalidIds.length === 0) {
-                showWingetStatus('No valid winget commands found in file', 'error');
+                    Object.keys(results.suggestions).forEach(invalidId => {
+                        const suggestions = results.suggestions[invalidId];
+                        if (suggestions.length > 0) {
+                            html += `<li><strong>${invalidId}</strong> → ${suggestions[0].app.name} (${suggestions[0].app.wingetId})</li>`;
+                        }
+                    });
+                    
+                    html += `</ul></div>`;
+                }
+            }
+
+            if (results.totalCommands === 0) {
+                html = `
+                    <div class="import-section">
+                        <h4>⚠️ No Winget Commands Found</h4>
+                        <p>The file doesn't contain any recognizable winget install commands.</p>
+                        <p><strong>Expected formats:</strong></p>
+                        <ul class="import-list">
+                            <li>winget install --id AppId.Name</li>
+                            <li>winget install -i AppId.Name</li>
+                            <li>winget install AppName</li>
+                        </ul>
+                    </div>
+                `;
+            }
+
+            resultsDiv.innerHTML = html;
+            modal.style.display = 'flex';
+
+            // Show status message
+            if (results.validIds.length > 0) {
+                const message = results.invalidIds.length > 0 
+                    ? `Partial import: ${results.validIds.length} apps selected, ${results.invalidIds.length} not found` 
+                    : `Successfully imported ${results.validIds.length} apps!`;
+                    
+                showStickyStatus(message, results.invalidIds.length > 0 ? 'warning' : 'success');
+            } else if (results.invalidIds.length > 0) {
+                showStickyStatus(`No valid apps found. ${results.invalidIds.length} apps not in database.`, 'error');
+            } else {
+                showStickyStatus('No winget commands found in file', 'error');
             }
         }
+
+        function closeImportModal() {
+            document.getElementById('importModal').style.display = 'none';
+        }
+
+        // Click outside modal to close
+        document.getElementById('importModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeImportModal();
+            }
+        });
 
         function updateSelectionsUI() {
             filterWingetApps();
@@ -1167,17 +1516,23 @@
             // Ctrl/Cmd + K to focus search
             if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
                 e.preventDefault();
-                const activeSearchInput = document.querySelector('.page.active .search-input');
-                if (activeSearchInput) {
-                    activeSearchInput.focus();
+                const searchInput = document.getElementById('headerSearchInput');
+                if (searchInput) {
+                    searchInput.focus();
                 }
             }
             
-            // Escape to clear search
+            // Escape to clear search or close modal
             if (e.key === 'Escape') {
-                const activeSearchInput = document.querySelector('.page.active .search-input');
-                if (activeSearchInput && activeSearchInput === document.activeElement) {
-                    activeSearchInput.value = '';
+                const modal = document.getElementById('importModal');
+                if (modal.style.display === 'flex') {
+                    closeImportModal();
+                    return;
+                }
+                
+                const searchInput = document.getElementById('headerSearchInput');
+                if (searchInput && searchInput === document.activeElement) {
+                    searchInput.value = '';
                     if (document.querySelector('.page.active').id === 'winget-page') {
                         filterWingetApps();
                     } else {
@@ -1193,15 +1548,16 @@
             checkInitialPage();
             
             // Add search input focus ring on tab
-            document.querySelectorAll('.search-input').forEach(input => {
-                input.addEventListener('focus', function() {
+            const headerSearchInput = document.getElementById('headerSearchInput');
+            if (headerSearchInput) {
+                headerSearchInput.addEventListener('focus', function() {
                     this.parentElement.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
                 });
                 
-                input.addEventListener('blur', function() {
+                headerSearchInput.addEventListener('blur', function() {
                     this.parentElement.style.boxShadow = 'none';
                 });
-            });
+            }
         });
 
         // Smooth scrolling for anchor links
@@ -1236,8 +1592,18 @@
         const debouncedNonWingetFilter = debounce(filterNonWingetApps, 300);
 
         // Update search input event listeners
-        document.getElementById('wingetSearchInput').onkeyup = debouncedWingetFilter;
-        document.getElementById('nonWingetSearchInput').onkeyup = debouncedNonWingetFilter;
+        document.addEventListener('DOMContentLoaded', function() {
+            const headerSearchInput = document.getElementById('headerSearchInput');
+            if (headerSearchInput) {
+                headerSearchInput.addEventListener('keyup', function() {
+                    if (document.querySelector('.page.active').id === 'winget-page') {
+                        debouncedWingetFilter();
+                    } else {
+                        debouncedNonWingetFilter();
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>
