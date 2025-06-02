@@ -5,264 +5,389 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bulk App Installer</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background-color: #f8f9fa;
-            color: #212529;
+        * {
             margin: 0;
-            padding: 20px;
-            transition: all 0.3s ease;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            min-height: 100vh;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-x: hidden;
         }
         
-        .dark-mode {
-            background-color: #1a1a1a;
-            color: #e9ecef;
+        .light-mode {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        /* Animated background particles */
+        .bg-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
+            50% { transform: translateY(-20px) rotate(180deg); opacity: 0.8; }
         }
 
         header {
             text-align: center;
-            margin: -20px -20px 30px;
-            padding: 40px 20px;
-            background: linear-gradient(135deg, #0078d4, #004e9e);
-            color: white;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            padding: 60px 20px 40px;
             position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
-        
+
+        h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #ffffff 0%, #a8edea 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+        }
+
         .nav-buttons {
-            margin-top: 20px;
             display: flex;
-            gap: 15px;
+            gap: 20px;
             justify-content: center;
+            flex-wrap: wrap;
         }
-        
+
         .nav-buttons button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 25px;
-            background: rgba(255,255,255,0.1);
+            padding: 14px 28px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
             color: white;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+            font-size: 0.95rem;
             position: relative;
-            border: 2px solid transparent;
-        }
-        
-        .nav-buttons button.active {
-            background: #0078d4;
-            border-color: rgba(255,255,255,0.3);
-            box-shadow: 0 4px 15px rgba(0,120,212,0.4);
-            transform: scale(1.05);
+            overflow: hidden;
         }
 
-        .nav-buttons button.active::after {
+        .nav-buttons button::before {
             content: '';
             position: absolute;
-            bottom: -5px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60%;
-            height: 3px;
-            background: rgba(255,255,255,0.8);
-            border-radius: 2px;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
         }
 
-        .dark-mode .nav-buttons button.active {
-            background: #0091ff;
-            box-shadow: 0 4px 15px rgba(0,145,255,0.4);
-            border-color: rgba(255,255,255,0.2);
+        .nav-buttons button:hover::before {
+            left: 100%;
         }
 
-        .dark-mode header {
-            background: linear-gradient(135deg, #004e9e, #002b5c);
+        .nav-buttons button:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .nav-buttons button.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: rgba(255, 255, 255, 0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 10;
         }
 
         .controls {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 25px;
+            gap: 20px;
+            margin-bottom: 40px;
             justify-content: center;
+            align-items: center;
         }
 
         .category-tabs {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             flex-wrap: wrap;
         }
-        
+
         .category-tabs button {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 20px;
-            background: #e9ecef;
-            color: #495057;
+            padding: 10px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: rgba(255, 255, 255, 0.8);
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.9rem;
         }
-        
-        .dark-mode .category-tabs button {
-            background: #2d2d2d;
-            color: #dee2e6;
+
+        .category-tabs button:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
         }
-        
+
         .category-tabs button.active {
-            background: #0078d4;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: rgba(255, 255, 255, 0.6);
             color: white;
+            transform: translateY(-1px);
         }
-        
-        .dark-mode .category-tabs button.active {
-            background: #0056b3;
+
+        .search-container {
+            position: relative;
         }
 
         .search-container input {
-            padding: 8px 12px;
-            width: 280px;
-            border: 2px solid #dee2e6;
+            padding: 12px 20px;
+            width: 300px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
             border-radius: 25px;
-            font-size: 14px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
         }
-        
-        .dark-mode .search-container input {
-            background: #2d2d2d;
-            border-color: #495057;
-            color: #e9ecef;
+
+        .search-container input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .search-container input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.15);
         }
 
         .app-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 15px;
-            max-width: 1200px;
-            margin: 0 auto;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
         }
 
         .app-card {
             display: flex;
             align-items: center;
-            padding: 15px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: all 0.2s ease;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
-        
-        .dark-mode .app-card {
-            background: #2d2d2d;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+
+        .app-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
         }
-        
+
+        .app-card:hover::before {
+            opacity: 1;
+        }
+
+        .app-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
         .app-card img {
-            width: 40px;
-            height: 40px;
+            width: 48px;
+            height: 48px;
             object-fit: contain;
-            margin-right: 15px;
+            margin-right: 16px;
+            border-radius: 8px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
         }
 
         .checkbox-container {
             display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: space-between;
             width: 100%;
+            gap: 15px;
         }
-        
+
+        .checkbox-container label {
+            font-weight: 500;
+            font-size: 1rem;
+            color: white;
+            flex: 1;
+        }
+
         input[type="checkbox"] {
             width: 20px;
             height: 20px;
-            margin-left: auto;
-            accent-color: #0078d4;
+            accent-color: #667eea;
             cursor: pointer;
             flex-shrink: 0;
-        }
-        
-        .dark-mode input[type="checkbox"] {
-            accent-color: #0056b3;
         }
 
         .buttons-container {
             display: flex;
-            gap: 15px;
+            gap: 20px;
             justify-content: center;
-            margin: 30px auto;
+            margin: 40px auto;
+            flex-wrap: wrap;
         }
 
         .download-btn, .upload-btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 25px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 32px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
             font-weight: 600;
+            font-size: 1rem;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
         }
-        
+
         .download-btn {
-            background: #0078d4;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
-        
+
         .upload-btn {
-            background: #6c757d;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
             color: white;
         }
-        
-        .dark-mode .download-btn {
-            background: #0056b3;
+
+        .download-btn::before, .upload-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
         }
-        
-        .dark-mode .upload-btn {
-            background: #5a6268;
+
+        .download-btn:hover::before, .upload-btn:hover::before {
+            left: 100%;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
         }
 
         .status-message {
-            padding: 15px;
-            border-radius: 12px;
-            margin: 20px auto;
+            padding: 20px;
+            border-radius: 16px;
+            margin: 30px auto;
             max-width: 600px;
             text-align: center;
             display: none;
             font-weight: 500;
+            backdrop-filter: blur(20px);
+            border: 1px solid;
         }
 
         .status-message.error {
-            background-color: #f8d7da;
-            border: 2px solid #f5c6cb;
-            color: #721c24;
+            background: rgba(220, 53, 69, 0.2);
+            border-color: rgba(220, 53, 69, 0.4);
+            color: #ffb3ba;
         }
 
         .status-message.success {
-            background-color: #d4edda;
-            border: 2px solid #c3e6cb;
-            color: #155724;
-        }
-
-        .dark-mode .status-message.error {
-            background-color: #2b0b0e;
-            border-color: #4c1414;
-            color: #ffb3b8;
-        }
-
-        .dark-mode .status-message.success {
-            background-color: #0d2912;
-            border-color: #1a4020;
-            color: #a3d7ac;
+            background: rgba(40, 167, 69, 0.2);
+            border-color: rgba(40, 167, 69, 0.4);
+            color: #b3ffb3;
         }
 
         .page {
             display: none;
         }
-        
+
         .page.active {
             display: block;
         }
 
         .credits {
             text-align: center;
-            margin-top: 40px;
-            color: #6c757d;
+            margin-top: 60px;
+            padding: 40px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px 24px 0 0;
         }
-        
-        .dark-mode .credits {
-            color: #adb5bd;
+
+        .credits p {
+            opacity: 0.8;
+            font-size: 1rem;
+        }
+
+        .creator-link {
+            color: #a8edea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .creator-link:hover {
+            color: white;
+            text-shadow: 0 0 10px rgba(168, 237, 234, 0.5);
         }
 
         #batUpload {
@@ -271,24 +396,78 @@
 
         .dark-mode-toggle {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 25px;
+            top: 30px;
+            right: 30px;
+            padding: 12px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
             font-weight: 600;
             cursor: pointer;
-            background: rgba(0,0,0,0.1);
-            color: #0078d4;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            z-index: 1000;
         }
-        
-        .dark-mode .dark-mode-toggle {
-            background: rgba(255,255,255,0.1);
-            color: #e9ecef;
+
+        .dark-mode-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .app-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .search-container input {
+                width: 100%;
+                max-width: 280px;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .category-tabs {
+                justify-content: center;
+            }
+
+            .buttons-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .download-btn, .upload-btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+
+            header {
+                padding: 40px 20px 30px;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+                gap: 15px;
+                align-items: center;
+            }
+
+            .nav-buttons button {
+                width: 100%;
+                max-width: 200px;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="bg-particles" id="particles"></div>
+    
     <header>
         <h1>Bulk App Installer</h1>
         <div class="nav-buttons">
@@ -300,42 +479,55 @@
     <button class="dark-mode-toggle" onclick="toggleDarkMode()">🌓 Toggle Theme</button>
     <input type="file" id="batUpload" accept=".bat">
 
-    <!-- Winget Apps Page -->
-    <div id="winget-page" class="page active">
-        <div class="controls">
-            <div class="category-tabs" id="wingetCategoryTabs"></div>
-            <div class="search-container">
-                <input type="text" id="wingetSearchInput" placeholder="Search apps..." onkeyup="filterWingetApps()">
+    <div class="container">
+        <!-- Winget Apps Page -->
+        <div id="winget-page" class="page active">
+            <div class="controls">
+                <div class="category-tabs" id="wingetCategoryTabs"></div>
+                <div class="search-container">
+                    <input type="text" id="wingetSearchInput" placeholder="Search apps..." onkeyup="filterWingetApps()">
+                </div>
+            </div>
+            
+            <div class="app-grid" id="wingetAppGrid"></div>
+            <div class="status-message" id="wingetStatusMessage"></div>
+            
+            <div class="buttons-container">
+                <button class="upload-btn" onclick="document.getElementById('batUpload').click()">
+                    <span>📁</span>
+                    <span>Import .bat</span>
+                </button>
+                <button class="download-btn" onclick="generateWingetScript()">
+                    <span>📦</span>
+                    <span>Generate Script</span>
+                </button>
             </div>
         </div>
-        
-        <div class="app-grid" id="wingetAppGrid"></div>
-        <div class="status-message" id="wingetStatusMessage"></div>
-        
-        <div class="buttons-container">
-            <button class="upload-btn" onclick="document.getElementById('batUpload').click()">📁 Import .bat</button>
-            <button class="download-btn" onclick="generateWingetScript()">📦 Generate Script</button>
+
+        <!-- Non-Winget Apps Page -->
+        <div id="non-winget-page" class="page">
+            <div class="controls">
+                <div class="category-tabs" id="nonWingetCategoryTabs"></div>
+                <div class="search-container">
+                    <input type="text" id="nonWingetSearchInput" placeholder="Search apps..." onkeyup="filterNonWingetApps()">
+                </div>
+            </div>
+            
+            <div class="app-grid" id="nonWingetAppGrid"></div>
+            <div class="status-message" id="nonWingetStatusMessage"></div>
+            
+            <div class="buttons-container">
+                <button class="download-btn" onclick="downloadSelected()">
+                    <span>📥</span>
+                    <span>Download Selected</span>
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- Non-Winget Apps Page -->
-    <div id="non-winget-page" class="page">
-        <div class="controls">
-            <div class="category-tabs" id="nonWingetCategoryTabs"></div>
-            <div class="search-container">
-                <input type="text" id="nonWingetSearchInput" placeholder="Search apps..." onkeyup="filterNonWingetApps()">
-            </div>
-        </div>
-        
-        <div class="app-grid" id="nonWingetAppGrid"></div>
-        <div class="status-message" id="nonWingetStatusMessage"></div>
-        
-        <div class="buttons-container">
-            <button class="download-btn" onclick="downloadSelected()">📥 Download Selected</button>
-        </div>
+    <div class="credits">
+        <p>Made with ❤️ by <a href="https://github.com/The3xds" class="creator-link" target="_blank" rel="noopener noreferrer"><strong>3xds</strong></a></p>
     </div>
-
-    <p class="credits">Made by <strong>3xds</strong></p>
 
     <script>
         // Winget Apps Data
@@ -395,10 +587,26 @@
         let selectedNonWingetApps = [];
         let currentNonWingetCategory = 'all';
 
+        // Create animated background particles
+        function createParticles() {
+            const particleContainer = document.getElementById('particles');
+            const particleCount = 50;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                particleContainer.appendChild(particle);
+            }
+        }
+
         // Common Functions
         function toggleDarkMode() {
-            document.body.classList.toggle('dark-mode');
-            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+            document.body.classList.toggle('light-mode');
+            localStorage.setItem('lightMode', document.body.classList.contains('light-mode'));
         }
 
         function showPage(pageId) {
@@ -480,7 +688,7 @@
             const card = document.createElement('div');
             card.className = 'app-card';
             card.innerHTML = `
-                <img src="${app.icon}" alt="${app.name}">
+                <img src="${app.icon}" alt="${app.name}" onerror="this.style.display='none'">
                 <div class="checkbox-container">
                     <label>${app.name}</label>
                     <input type="checkbox" 
@@ -504,8 +712,8 @@
         }
 
         function updateWingetButton() {
-            const btn = document.querySelector('#winget-page .download-btn');
-            btn.textContent = `📦 Generate Script (${selectedWingetApps.length})`;
+            const btn = document.querySelector('#winget-page .download-btn span:last-child');
+            btn.textContent = `Generate Script (${selectedWingetApps.length})`;
         }
 
         function generateWingetScript() {
@@ -582,7 +790,7 @@
             const card = document.createElement('div');
             card.className = 'app-card';
             card.innerHTML = `
-                <img src="${app.icon}" alt="${app.name}">
+                <img src="${app.icon}" alt="${app.name}" onerror="this.style.display='none'">
                 <div class="checkbox-container">
                     <label>${app.name}</label>
                     <input type="checkbox" 
@@ -606,8 +814,8 @@
         }
 
         function updateNonWingetButton() {
-            const btn = document.querySelector('#non-winget-page .download-btn');
-            btn.textContent = `📥 Download Selected (${selectedNonWingetApps.length})`;
+            const btn = document.querySelector('#non-winget-page .download-btn span:last-child');
+            btn.textContent = `Download Selected (${selectedNonWingetApps.length})`;
         }
 
         function downloadSelected() {
@@ -730,12 +938,31 @@
         }
 
         // Initialize
-        if(localStorage.getItem('darkMode') === 'true') {
-            document.body.classList.add('dark-mode');
-        }
-        
-        // Initialize based on URL hash
-        checkInitialPage();
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            
+            // Initialize light mode if previously set
+            if (localStorage.getItem('lightMode') === 'true') {
+                document.body.classList.add('light-mode');
+            }
+            
+            // Initialize based on URL hash
+            checkInitialPage();
+        });
+
+        // Add smooth scrolling for internal links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
     </script>
 </body>
 </html>
