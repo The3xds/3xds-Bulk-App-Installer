@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Map</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            background: #1a1a1a;
+        }
+
+        #map-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            cursor: grab;
+            background: #2a2a2a;
+        }
+
+        #map-container.grabbing {
+            cursor: grabbing;
+        }
+
+        #map-image {
+            position: absolute;
+            transform-origin: 0 0;
+            image-rendering: high-quality;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        #markers-layer {
+            position: absolute;
+            transform-origin: 0 0;
+            pointer-events: none;
+        }
+
+        #controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            backdrop-filter: blur(10px);
+        }
+
+        .control-btn:hover {
+            background: rgba(0, 0, 0, 0.9);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        #zoom-level {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        #coordinates {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            font-family: monospace;
+        }
+
+        #credit {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .marker {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #ff4444;
+            border: 1px solid white;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            transition: all 0.2s;
+            z-index: 50;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            pointer-events: auto;
+        }
+
+        .marker:hover {
+            transform: translate(-50%, -50%) scale(1.2);
+            box-shadow: 0 4px 15px rgba(255, 68, 68, 0.6);
+        }
+
+        .marker-label {
+            position: absolute;
+            top: 50%;
+            left: 8px;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 3px;
+            white-space: nowrap;
+            font-size: 12px;
+            pointer-events: none;
+        }
+
+        #info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            max-width: 300px;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        #info h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        #info p {
+            font-size: 12px;
+            line-height: 1.5;
+            color: #ccc;
+        }
+
+        #marker-list {
+            position: absolute;
+            top: 120px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            max-width: 250px;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        #marker-list h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 5px;
+        }
+
+        .marker-item {
+            padding: 8px;
+            margin: 5px 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .marker-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+
+        .marker-item-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 1px solid white;
+            flex-shrink: 0;
+        }
+
+        .marker-item-label {
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div id="map-container">
+        <img id="map-image" src="fishersisland.png" alt="Map">
+        <div id="markers-layer"></div>
+    </div>
+
+    <div id="controls">
+        <button class="control-btn" id="zoom-in" title="Zoom In">+</button>
+        <button class="control-btn" id="zoom-out" title="Zoom Out">−</button>
+        <button class="control-btn" id="reset" title="Reset View">⟲</button>
+    </div>
+
+    <div id="zoom-level">Zoom: 100%</div>
+
+    <div id="coordinates">X: 0, Y: 0</div>
+
+    <div id="credit">Made by 3xds</div>
+
+    <div id="info">
+        <h2>Interactive Map</h2>
+        <p>Click and drag to pan • Scroll to zoom • Right-click to add markers</p>
+    </div>
+
+    <div id="marker-list">
+        <h3>Map Markers</h3>
+        <div id="markers"></div>
+    </div>
+
+    <script>
+        const container = document.getElementById('map-container');
+        const img = document.getElementById('map-image');
+        const markersLayer = document.getElementById('markers-layer');
+        const zoomDisplay = document.getElementById('zoom-level');
+        const coordDisplay = document.getElementById('coordinates');
+        const markerListEl = document.getElementById('markers');
+
+        let scale = 1;
+        let panning = false;
+        let startX = 0;
+        let startY = 0;
+        let translateX = 0;
+        let translateY = 0;
+        let markers = [];
+        let markerData = [];
+
+        // Initialize image
+        img.onload = () => {
+            const containerWidth = container.clientWidth;
+            const containerHeight = container.clientHeight;
+            const imgWidth = img.naturalWidth;
+            const imgHeight = img.naturalHeight;
+
+            // Start more zoomed out
+            scale = 0.3;
+            
+            // Center the image
+            translateX = (containerWidth - imgWidth * scale) / 2;
+            translateY = (containerHeight - imgHeight * scale) / 2;
+            updateTransform();
+
+            // Add weed dealer marker
+            addMarker(5410, 2975, '🌿 Weed Dealer', '#4CAF50');
+            
+            // Add cocaine dealer marker
+            addMarker(3371, 3375, '❄️ Cocaine Dealer', '#2196F3');
+
+            updateMarkerList();
+        };
+
+        function updateTransform() {
+            img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+            markersLayer.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+            zoomDisplay.textContent = `Zoom: ${Math.round(scale * 100)}%`;
+        }
+
+        // Pan functionality
+        container.addEventListener('mousedown', (e) => {
+            if (e.button === 0) {
+                panning = true;
+                startX = e.clientX - translateX;
+                startY = e.clientY - translateY;
+                container.classList.add('grabbing');
+            }
+        });
+
+        container.addEventListener('mousemove', (e) => {
+            // Update coordinates
+            const rect = container.getBoundingClientRect();
+            const x = Math.round((e.clientX - rect.left - translateX) / scale);
+            const y = Math.round((e.clientY - rect.top - translateY) / scale);
+            coordDisplay.textContent = `X: ${x}, Y: ${y}`;
+
+            if (panning) {
+                translateX = e.clientX - startX;
+                translateY = e.clientY - startY;
+                updateTransform();
+            }
+        });
+
+        container.addEventListener('mouseup', () => {
+            panning = false;
+            container.classList.remove('grabbing');
+        });
+
+        container.addEventListener('mouseleave', () => {
+            panning = false;
+            container.classList.remove('grabbing');
+        });
+
+        // Zoom functionality
+        container.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? 0.9 : 1.1;
+            const newScale = scale * delta;
+
+            if (newScale >= 0.1 && newScale <= 10) {
+                const rect = container.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+
+                translateX = mouseX - (mouseX - translateX) * delta;
+                translateY = mouseY - (mouseY - translateY) * delta;
+                scale = newScale;
+
+                updateTransform();
+            }
+        });
+
+        // Control buttons
+        document.getElementById('zoom-in').addEventListener('click', () => {
+            if (scale < 10) {
+                const centerX = container.clientWidth / 2;
+                const centerY = container.clientHeight / 2;
+                translateX = centerX - (centerX - translateX) * 1.2;
+                translateY = centerY - (centerY - translateY) * 1.2;
+                scale *= 1.2;
+                updateTransform();
+            }
+        });
+
+        document.getElementById('zoom-out').addEventListener('click', () => {
+            if (scale > 0.1) {
+                const centerX = container.clientWidth / 2;
+                const centerY = container.clientHeight / 2;
+                translateX = centerX - (centerX - translateX) / 1.2;
+                translateY = centerY - (centerY - translateY) / 1.2;
+                scale /= 1.2;
+                updateTransform();
+            }
+        });
+
+        document.getElementById('reset').addEventListener('click', () => {
+            scale = 1;
+            translateX = (container.clientWidth - img.naturalWidth) / 2;
+            translateY = (container.clientHeight - img.naturalHeight) / 2;
+            updateTransform();
+        });
+
+        // Add markers with right-click
+        container.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            const rect = container.getBoundingClientRect();
+            const x = (e.clientX - rect.left - translateX) / scale;
+            const y = (e.clientY - rect.top - translateY) / scale;
+            
+            addMarker(x, y, `Marker ${markers.length + 1}`, '#ff4444');
+            updateMarkerList();
+        });
+
+        function addMarker(x, y, label, color = '#ff4444') {
+            const marker = document.createElement('div');
+            marker.className = 'marker';
+            marker.style.left = `${x}px`;
+            marker.style.top = `${y}px`;
+            marker.style.background = color;
+            
+            const markerLabel = document.createElement('div');
+            markerLabel.className = 'marker-label';
+            markerLabel.textContent = label;
+            marker.appendChild(markerLabel);
+
+            marker.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (confirm('Remove this marker?')) {
+                    marker.remove();
+                    markers = markers.filter(m => m !== marker);
+                    markerData = markerData.filter(m => m.x !== x || m.y !== y);
+                    updateMarkerList();
+                }
+            });
+
+            markersLayer.appendChild(marker);
+            markers.push(marker);
+            markerData.push({ x, y, label, color });
+        }
+
+        function updateMarkerList() {
+            markerListEl.innerHTML = '';
+            markerData.forEach(m => {
+                const item = document.createElement('div');
+                item.className = 'marker-item';
+                
+                const dot = document.createElement('div');
+                dot.className = 'marker-item-dot';
+                dot.style.background = m.color;
+                
+                const labelEl = document.createElement('div');
+                labelEl.className = 'marker-item-label';
+                labelEl.textContent = m.label;
+                
+                item.appendChild(dot);
+                item.appendChild(labelEl);
+                
+                item.addEventListener('click', () => {
+                    goToLocation(m.x, m.y);
+                });
+                
+                markerListEl.appendChild(item);
+            });
+        }
+
+        function goToLocation(x, y) {
+            scale = 2;
+            translateX = container.clientWidth / 2 - x * scale;
+            translateY = container.clientHeight / 2 - y * scale;
+            updateTransform();
+        }
+    </script>
+</body>
+</html>
