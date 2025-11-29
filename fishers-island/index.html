@@ -139,7 +139,6 @@
             position: absolute;
             top: 50%;
             left: 8px;
-            transform: translateY(-50%);
             background: rgba(0, 0, 0, 0.8);
             color: white;
             padding: 5px 10px;
@@ -395,6 +394,9 @@
         });
 
         function addMarker(x, y, label, color = '#ff4444') {
+            // Check how many markers are already at this position
+            const markersAtPosition = markerData.filter(m => m.x === x && m.y === y).length;
+            
             const marker = document.createElement('div');
             marker.className = 'marker';
             marker.style.left = `${x}px`;
@@ -404,6 +406,9 @@
             const markerLabel = document.createElement('div');
             markerLabel.className = 'marker-label';
             markerLabel.textContent = label;
+            // Stack labels vertically - each one 25px higher than the previous
+            const offset = markersAtPosition * 25;
+            markerLabel.style.transform = `translateY(calc(-50% - ${offset}px))`;
             marker.appendChild(markerLabel);
 
             marker.addEventListener('click', (e) => {
@@ -411,7 +416,7 @@
                 if (confirm('Remove this marker?')) {
                     marker.remove();
                     markers = markers.filter(m => m !== marker);
-                    markerData = markerData.filter(m => m.x !== x || m.y !== y);
+                    markerData = markerData.filter(m => !(m.x === x && m.y === y && m.label === label));
                     updateMarkerList();
                 }
             });
